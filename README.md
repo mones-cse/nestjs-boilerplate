@@ -121,23 +121,21 @@ echo "pnpm run lint && pnpm run format" > .husky/pre-commit
 
 ## Project Structure
 
-```
-nestjs-boilerplate/
-├── src/
-│   ├── auth/          # Authentication module
-│   ├── users/         # Users module
-│   ├── todos/         # Todos module
-│   ├── common/        # Common utilities, guards, interceptors
-│   ├── config/        # Configuration files
-│   ├── database/      # Database configuration and migrations
-│   └── main.ts        # Application entry point
-├── test/              # Test files
-├── docker-compose.yml # Docker configuration
-├── .eslintrc.js       # ESLint configuration
-├── .prettierrc        # Prettier configuration
-├── tsconfig.json      # TypeScript configuration
-└── package.json       # Project dependencies
-```
+    nestjs-boilerplate/
+    ├── src/
+    │   ├── auth/          # Authentication module
+    │   ├── users/         # Users module
+    │   ├── todos/         # Todos module
+    │   ├── common/        # Common utilities, guards, interceptors
+    │   ├── config/        # Configuration files
+    │   ├── database/      # Database configuration and migrations
+    │   └── main.ts        # Application entry point
+    ├── test/              # Test files
+    ├── docker-compose.yml # Docker configuration
+    ├── .eslintrc.js       # ESLint configuration
+    ├── .prettierrc        # Prettier configuration
+    ├── tsconfig.json      # TypeScript configuration
+    └── package.json       # Project dependencies
 
 ## Available Scripts
 
@@ -163,9 +161,20 @@ pnpm run db:generate
 # Apply migrations
 pnpm run db:migrate
 
-# Open Drizzle Studio to view/edit data
+# Push schema directly (development only - bypasses migrations)
+# ⚠️ WARNING: Don't use in production as it bypasses migration history
+pnpm run db:push
+
+# Opens Drizzle Studio at https://local.drizzle.studio
 pnpm run db:studio
 ```
+
+### Migration files
+
+- Located in src/database/migrations/
+- Named with timestamp: 0000*[adjective]*[name].sql
+- Commit these files to version control
+- Never edit migration files after they've been applied
 
 ## API Documentation
 
