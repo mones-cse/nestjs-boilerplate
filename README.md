@@ -1,75 +1,3 @@
-## Project setup
-
-```bash
-$ pnpm install
-```
-
-## Compile and run the project
-
-```bash
-# development
-$ pnpm run start
-
-# watch mode
-$ pnpm run start:dev
-
-# production mode
-$ pnpm run start:prod
-```
-
-## Run tests
-
-```bash
-# unit tests
-$ pnpm run test
-
-# e2e tests
-$ pnpm run test:e2e
-
-# test coverage
-$ pnpm run test:cov
-```
-
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
-```bash
-$ pnpm install -g @nestjs/mau
-$ mau deploy
-```
-
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
-
-## Resources
-
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
-
 # NestJS Boilerplate
 
 A production-ready NestJS boilerplate with JWT authentication, PostgreSQL, and modern tooling.
@@ -139,41 +67,42 @@ pnpm run start:prod
 
 The API will be available at http://localhost:3000
 
-## Code Quality with Biome
+## Code Quality
 
-This project uses Biome for linting and formatting instead of ESLint/Prettier.
+This project uses ESLint for linting and Prettier for code formatting.
 
-### Biome Commands
+### Commands
 
 ```bash
-# Check for linting and formatting issues
-pnpm run check
-
-# Format code
-pnpm run format
-
 # Lint code
 pnpm run lint
 
-# Fix linting issues
-pnpm run lint:fix
+# Format code
+pnpm run format
 ```
 
 ### VS Code Integration
 
-1. Install the Biome VS Code extension
-2. Add to your VS Code settings (.vscode/settings.json):
+1. Install recommended extensions:
+   - ESLint (dbaeumer.vscode-eslint)
+   - Prettier - Code formatter (esbenp.prettier-vscode)
+2. VS Code will automatically use the workspace settings in `.vscode/settings.json` for formatting and linting.
 
-```json
-{
-  "editor.formatOnSave": true,
-  "editor.defaultFormatter": "biomejs.biome",
-  "editor.codeActionsOnSave": {
-    "quickfix.biome": "explicit",
-    "source.organizeImports.biome": "explicit"
-  }
-}
-```
+   ```json
+   {
+     "editor.formatOnSave": true,
+     "editor.defaultFormatter": "esbenp.prettier-vscode",
+     "editor.codeActionsOnSave": {
+       "source.fixAll.eslint": "explicit"
+     },
+     "[typescript]": {
+       "editor.defaultFormatter": "esbenp.prettier-vscode"
+     },
+     "[javascript]": {
+       "editor.defaultFormatter": "esbenp.prettier-vscode"
+     }
+   }
+   ```
 
 ### Pre-commit hook (optional)
 
@@ -187,7 +116,7 @@ pnpm add -D husky
 pnpm exec husky init
 
 # Add pre-commit hook
-echo "pnpm run check" > .husky/pre-commit
+echo "pnpm run lint && pnpm run format" > .husky/pre-commit
 ```
 
 ## Project Structure
@@ -204,7 +133,8 @@ nestjs-boilerplate/
 │   └── main.ts        # Application entry point
 ├── test/              # Test files
 ├── docker-compose.yml # Docker configuration
-├── biome.json         # Biome configuration
+├── .eslintrc.js       # ESLint configuration
+├── .prettierrc        # Prettier configuration
 ├── tsconfig.json      # TypeScript configuration
 └── package.json       # Project dependencies
 ```
@@ -214,16 +144,42 @@ nestjs-boilerplate/
 - `pnpm run start:dev` - Start in development mode with hot reload
 - `pnpm run build` - Build for production
 - `pnpm run start:prod` - Start in production mode
-- `pnpm run check` - Run Biome check (format + lint)
-- `pnpm run format` - Format code with Biome
-- `pnpm run lint` - Lint code with Biome
-- `pnpm run lint:fix` - Fix linting issues
+- `pnpm run lint` - Run ESLint (format + lint)
+- `pnpm run format` - Format code with Prettier
 - `pnpm run test` - Run unit tests
 - `pnpm run test:e2e` - Run e2e tests
+- `pnpm run test:cov` - Run tests with coverage
+- `pnpm run db:generate` - Generate database migrations
+- `pnpm run db:migrate` - Run database migrations
+- `pnpm run db:push` - Push schema changes to database
+- `pnpm run db:studio` - Open Drizzle Studio
+
+## Database Management
+
+```bash
+# Generate migrations after schema changes
+pnpm run db:generate
+
+# Apply migrations
+pnpm run db:migrate
+
+# Open Drizzle Studio to view/edit data
+pnpm run db:studio
+```
 
 ## API Documentation
 
 Postman collection is available at `./postman/collection.json` after setup.
+
+## Deployment
+
+For deployment instructions, check out the NestJS deployment documentation.
+
+Resources
+
+[NestJS Documentation](https://docs.nestjs.com)
+[Drizzle ORM Documentation](https://orm.drizzle.team/)
+[PostgreSQL Documentation](https://www.postgresql.org/docs/)
 
 ## License
 
