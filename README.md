@@ -119,6 +119,13 @@ pnpm exec husky init
 echo "pnpm run lint && pnpm run format" > .husky/pre-commit
 ```
 
+The commit-msg hook will ensure commits follow conventional format:
+
+- **feat**: for features
+- **fix**: for bug fixes
+- **docs**: for documentation
+- **chore**: for maintenance
+
 ## Project Structure
 
     nestjs-boilerplate/
