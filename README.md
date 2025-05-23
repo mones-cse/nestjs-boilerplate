@@ -112,6 +112,9 @@ pnpm install
 # Start PostgreSQL container
 docker-compose up -d
 
+# If you want to check all databases
+docker exec -it boilerplate-postgres psql -U postgres -c "\l"
+
 # Verify it's running
 docker ps
 ```
