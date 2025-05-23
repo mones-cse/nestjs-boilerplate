@@ -5,13 +5,44 @@ services:
     container_name: boilerplate-postgres
     restart: always
     ports:
-      - "5432:5432"
+      - '5432:5432'
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres123
       POSTGRES_DB: boilerplate_db
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: boilerplate-backend
+    restart: always
+    ports:
+      - '3000:3000'
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres123@postgres:5432/boilerplate_db
+      NODE_ENV: production
+      PORT: 3000
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN}
+      REFRESH_TOKEN_SECRET: ${REFRESH_TOKEN_SECRET}
+      REFRESH_TOKEN_EXPIRES_IN: ${REFRESH_TOKEN_EXPIRES_IN}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+      GOOGLE_CALLBACK_URL: ${GOOGLE_CALLBACK_URL}
+      FRONTEND_URL: ${FRONTEND_URL}
+    depends_on:
+      - postgres
+    networks:
+      - app-network
 
 volumes:
   postgres_data:
+
+networks:
+  app-network:
+    driver: bridge
