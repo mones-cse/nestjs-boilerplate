@@ -126,6 +126,12 @@ The commit-msg hook will ensure commits follow conventional format:
 - **docs**: for documentation
 - **chore**: for maintenance
 
+The pre-commit hook will:
+
+- Run ESLint and fix issues
+- Format with Prettier
+- Only on staged files
+
 ## Project Structure
 
     nestjs-boilerplate/

@@ -46,7 +46,10 @@ export class AuthController {
 
     // Redirect to frontend with access token
     const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
-    res.redirect(`${frontendUrl}/dashboard?token=${authResponse.accessToken}`);
+    // res.redirect(`${frontendUrl}/dashboard?token=${authResponse.accessToken}`);
+    res.redirect(
+      `${frontendUrl}/auth/callback?token=${authResponse.accessToken}`,
+    );
   }
 
   @Post('refresh')
