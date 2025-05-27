@@ -173,4 +173,32 @@ export class AuthService {
   async logout(userId: number): Promise<void> {
     await this.usersService.updateRefreshToken(userId, null);
   }
+
+  async setInitialPassword(userId: number, newPassword: string): Promise<void> {
+    const user = await this.usersService.findById(userId);
+
+    if (!user) {
+      throw new BadRequestException('User not found');
+    }
+
+    // Check if user already has a password
+    if (user.password) {
+      throw new BadRequestException(
+        'Password already set. Use change password instead.',
+      );
+    }
+
+    // User must have Google auth to set initial password
+    if (!user.googleId) {
+      throw new BadRequestException(
+        'Cannot set password without alternative authentication method',
+      );
+    }
+
+    // Hash new password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    // Update password
+    await this.usersService.updatePassword(userId, hashedPassword);
+  }
 }

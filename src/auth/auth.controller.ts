@@ -20,6 +20,7 @@ import {
   refreshTokenSchema,
   RegisterDto,
   registerSchema,
+  setPasswordSchema,
 } from './dto/auth.dto';
 import { GoogleAuthGuard } from './guards/google-auth.guard';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
@@ -54,6 +55,17 @@ export class AuthController {
   ) {
     await this.authService.changePassword(req.user.id, changePasswordDto);
     return { message: 'Password changed successfully' };
+  }
+
+  @Post('set-password')
+  @UseGuards(JwtAuthGuard)
+  async setPassword(
+    @Body(new ZodValidationPipe(setPasswordSchema))
+    body: { newPassword: string },
+    @Req() req: RequestWithUser,
+  ) {
+    await this.authService.setInitialPassword(req.user.id, body.newPassword);
+    return { message: 'Password set successfully' };
   }
 
   @Get('google')

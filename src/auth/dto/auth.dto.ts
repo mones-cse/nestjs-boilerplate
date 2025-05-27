@@ -40,6 +40,16 @@ export const changePasswordSchema = z.object({
 });
 export type ChangePasswordDto = z.infer<typeof changePasswordSchema>;
 
+// 1st time password set for google users
+export const setPasswordSchema = z.object({
+  newPassword: z
+    .string()
+    .min(6, 'New password must be at least 6 characters long')
+    .max(100, 'New password must not exceed 100 characters'),
+});
+
+export type SetPasswordDto = z.infer<typeof setPasswordSchema>;
+
 // JWT payload
 export const jwtPayloadSchema = z.object({
   sub: z.number(), // user id
