@@ -1,19 +1,100 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import bcrypt from 'bcrypt';
+import type { User } from '../database/schema';
 import { UsersService } from '../users/users.service';
 import {
   googleUserSchema,
-  type GoogleUserDto,
   type AuthResponse,
+  type ChangePasswordDto,
+  type GoogleUserDto,
+  type LoginDto,
+  type RegisterDto,
 } from './dto/auth.dto';
-import type { User } from '../database/schema';
-
 @Injectable()
 export class AuthService {
   constructor(
     private usersService: UsersService,
     private jwtService: JwtService,
   ) {}
+
+  async register(registerDto: RegisterDto): Promise<AuthResponse> {
+    const existingUser = await this.usersService.findByEmail(registerDto.email);
+    if (existingUser) {
+      throw new ConflictException('User with this email already exists');
+    }
+    const hashedPassword = await bcrypt.hash(registerDto.password, 10);
+
+    // Create user
+    const newUser = await this.usersService.create({
+      email: registerDto.email,
+      password: hashedPassword,
+      name: registerDto.name || null,
+      emailVerified: false, // Email verification can be implemented later
+    });
+
+    return this.login(newUser);
+  }
+
+  async validateUser(email: string, password: string): Promise<User | null> {
+    const user = await this.usersService.findByEmail(email);
+    if (!user) {
+      return null; // User not found
+    }
+
+    if (!user.password) {
+      return null; // No password set for user
+    }
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      return null; // Invalid password
+    }
+
+    return user; // User is valid
+  }
+
+  async loginWithPassword(loginDto: LoginDto): Promise<AuthResponse> {
+    const user = await this.validateUser(loginDto.email, loginDto.password);
+    if (!user) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+    return this.login(user);
+  }
+
+  async changePassword(
+    userId: number,
+    changePasswordDto: ChangePasswordDto,
+  ): Promise<void> {
+    const user = await this.usersService.findById(userId);
+
+    if (!user || !user.password) {
+      throw new BadRequestException('Cannot change password for this account');
+    }
+
+    // Verify current password
+    const isCurrentPasswordValid = await bcrypt.compare(
+      changePasswordDto.currentPassword,
+      user.password,
+    );
+
+    if (!isCurrentPasswordValid) {
+      throw new UnauthorizedException('Current password is incorrect');
+    }
+
+    // Hash new password
+    const hashedNewPassword = await bcrypt.hash(
+      changePasswordDto.newPassword,
+      10,
+    );
+
+    // Update password
+    await this.usersService.updatePassword(userId, hashedNewPassword);
+  }
 
   async validateGoogleUser(googleUser: GoogleUserDto): Promise<User> {
     // Validate input with Zod
@@ -30,10 +111,13 @@ export class AuthService {
     user = await this.usersService.findByEmail(validatedData.email);
 
     if (user) {
-      // User exists but hasn't linked Google account
-      throw new UnauthorizedException(
-        'An account with this email already exists. Please login with your existing method.',
+      // User exists with email/password, link Google account
+      await this.usersService.linkGoogleAccount(
+        user.id,
+        validatedData.googleId,
+        validatedData.picture || null,
       );
+      return user;
     }
 
     // Create new user

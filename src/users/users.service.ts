@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { db } from '../config/database.config';
-import { users, type User, type NewUser } from '../database/schema';
 import { eq } from 'drizzle-orm';
+import { db } from '../config/database.config';
+import { users, type NewUser, type User } from '../database/schema';
 
 @Injectable()
 export class UsersService {
@@ -48,6 +48,29 @@ export class UsersService {
     await db
       .update(users)
       .set({ refreshToken, updatedAt: new Date() })
+      .where(eq(users.id, userId));
+  }
+
+  async updatePassword(userId: number, hashedPassword: string): Promise<void> {
+    await db
+      .update(users)
+      .set({ password: hashedPassword, updatedAt: new Date() })
+      .where(eq(users.id, userId));
+  }
+
+  async linkGoogleAccount(
+    userId: number,
+    googleId: string,
+    picture: string | null,
+  ): Promise<void> {
+    await db
+      .update(users)
+      .set({
+        googleId,
+        picture,
+        emailVerified: true, // Google accounts are pre-verified
+        updatedAt: new Date(),
+      })
       .where(eq(users.id, userId));
   }
 }

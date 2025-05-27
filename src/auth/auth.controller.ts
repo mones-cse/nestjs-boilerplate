@@ -1,20 +1,28 @@
 import {
+  Body,
   Controller,
   Get,
   Post,
-  UseGuards,
   Req,
   Res,
-  Body,
   UnauthorizedException,
+  UseGuards,
 } from '@nestjs/common';
 import type { Request, Response } from 'express';
-import { AuthService } from './auth.service';
-import { GoogleAuthGuard } from './guards/google-auth.guard';
-import { JwtAuthGuard } from './guards/jwt-auth.guard';
-import { refreshTokenSchema } from './dto/auth.dto';
 import { ZodValidationPipe } from '../common/pipes/zod-validation.pipe';
 import type { User } from '../database/schema';
+import { AuthService } from './auth.service';
+import {
+  ChangePasswordDto,
+  changePasswordSchema,
+  LoginDto,
+  loginSchema,
+  refreshTokenSchema,
+  RegisterDto,
+  registerSchema,
+} from './dto/auth.dto';
+import { GoogleAuthGuard } from './guards/google-auth.guard';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
 
 // Extend Express Request to include user
 interface RequestWithUser extends Request {
@@ -24,6 +32,29 @@ interface RequestWithUser extends Request {
 @Controller('api/v1/auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
+
+  @Post('register')
+  async register(
+    @Body(new ZodValidationPipe(registerSchema)) registerDto: RegisterDto,
+  ) {
+    return this.authService.register(registerDto);
+  }
+
+  @Post('login')
+  async login(@Body(new ZodValidationPipe(loginSchema)) loginDto: LoginDto) {
+    return this.authService.loginWithPassword(loginDto);
+  }
+
+  @Post('change-password')
+  @UseGuards(JwtAuthGuard)
+  async changePassword(
+    @Body(new ZodValidationPipe(changePasswordSchema))
+    changePasswordDto: ChangePasswordDto,
+    @Req() req: RequestWithUser,
+  ) {
+    await this.authService.changePassword(req.user.id, changePasswordDto);
+    return { message: 'Password changed successfully' };
+  }
 
   @Get('google')
   @UseGuards(GoogleAuthGuard)
@@ -87,6 +118,9 @@ export class AuthController {
       email: req.user.email,
       name: req.user.name,
       picture: req.user.picture,
+      emailVerified: req.user.emailVerified,
+      hasPassword: !!req.user.password,
+      hasGoogleAccount: !!req.user.googleId,
     };
   }
 }
