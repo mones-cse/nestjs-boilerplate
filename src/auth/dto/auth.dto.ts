@@ -10,6 +10,36 @@ export const googleUserSchema = z.object({
 
 export type GoogleUserDto = z.infer<typeof googleUserSchema>;
 
+// Email/Password registration
+export const registerSchema = z.object({
+  email: z.string().email(),
+  password: z
+    .string()
+    .min(6, 'Password must be at least 6 characters long')
+    .max(100, 'Password must not exceed 100 characters'),
+  name: z.string().min(2).max(50).optional(),
+});
+export type RegisterDto = z.infer<typeof registerSchema>;
+
+// Email/Password login
+export const loginSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(6, 'Password must be at least 6 characters long'),
+});
+export type LoginDto = z.infer<typeof loginSchema>;
+
+// Change password
+export const changePasswordSchema = z.object({
+  currentPassword: z
+    .string()
+    .min(6, 'Current password must be at least 6 characters long'),
+  newPassword: z
+    .string()
+    .min(6, 'New password must be at least 6 characters long')
+    .max(100, 'New password must not exceed 100 characters'),
+});
+export type ChangePasswordDto = z.infer<typeof changePasswordSchema>;
+
 // JWT payload
 export const jwtPayloadSchema = z.object({
   sub: z.number(), // user id
