@@ -1,6 +1,6 @@
 # NestJS Boilerplate
 
-A NestJS boilerplate with JWT authentication, PostgreSQL, and modern tooling.
+A NestJS boilerplate with JWT authentication, PostgreSQL, and modern tooling. The React frontend code base is available in the [react-boilerplate](https://github.com/mones-cse/react-boilerplate).
 
 ## Prerequisites
 
