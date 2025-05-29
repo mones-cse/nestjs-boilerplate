@@ -1,6 +1,6 @@
 # NestJS Boilerplate
 
-A production-ready NestJS boilerplate with JWT authentication, PostgreSQL, and modern tooling.
+A NestJS boilerplate with JWT authentication, PostgreSQL, and modern tooling.
 
 ## Prerequisites
 
@@ -16,8 +16,32 @@ A production-ready NestJS boilerplate with JWT authentication, PostgreSQL, and m
 - **ORM**: Drizzle ORM
 - **Authentication**: JWT with Refresh Tokens + Google OAuth
 - **Validation**: Zod + Drizzle-Zod
-- **Linting/Formatting**: Biome JS
+- **Linting/Formatting**: ESLint + Prettier
+- **Git Hooks**: Husky + lint-staged
 - **API Documentation**: Postman Collection
+- **Containerization**: Docker + Docker Compose
+
+## Features
+
+- 🔐 **Authentication**
+  - JWT-based authentication with refresh tokens
+  - Google OAuth integration
+  - Password reset and change functionality
+  - Email/Password registration
+- 📝 **Todo Management**
+  - CRUD operations for todos
+  - Zod validation for requests
+- 🛠️ **Development Experience**
+  - Hot reload in development
+  - Strict TypeScript configuration
+  - ESLint + Prettier integration
+  - Git hooks for code quality
+  - Comprehensive test setup
+- 🗃️ **Database**
+  - PostgreSQL with Drizzle ORM
+  - Type-safe schema definitions
+  - Migration management
+  - Drizzle Studio support
 
 ## First Time Setup
 
@@ -67,6 +91,13 @@ pnpm run start:prod
 
 The API will be available at http://localhost:3000
 
+### 6. Run migrations
+
+```bash
+pnpm run db:generate
+pnpm run db:migrate
+```
+
 ## Code Quality
 
 This project uses ESLint for linting and Prettier for code formatting.
@@ -106,7 +137,7 @@ pnpm run format
 
 ### Pre-commit hook (optional)
 
-To ensure code quality before commits:
+To ensure code quality before commits this command are used you don't have to run them manually:
 
 ```bash
 # Install husky
